@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Button, Alert} from 'react-native';
+import {View, Text, StyleSheet, Button, Alert, FlatList} from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import {List, ListItem} from 'react-native-elements';
 
@@ -23,19 +23,38 @@ class HomeScreen extends React.Component{
 }
 class OptionsScreen extends React.Component{
     render(){
+        let data = [
+            {
+                key: 112,
+                name: 'Daniel Peña',
+                career: 'Ingeniería de Software'
+            },
+            {
+                key: 113,
+                name: 'Reyna Suriel',
+                career: 'Diseño Industrial'
+            },
+            {
+                key: 114,
+                name: 'Israel Peña',
+                career: 'Ingeniería en Cyberseguridad'
+            }
+        ];
         return(
             <View>
-                {
-                    list.map((l,i) => (
-                        <ListItem
-                            Key={i}
-                            leftAvatar={{source:{uri:l.avatar_url}}}
-                            title={l.name}
-                            subtitle={l.subtitle}
-                        />
-                    ))
-                }
+                <FlatList data={data} renderItem={({item}) => <MyListItem name={item.name} career={item.career} />} />
             </View>
+        );
+    }
+}
+class MyListItem extends React.Component{
+    render(){
+        return(
+            <View style={styles.listItemBox}>
+                <Text style={styles.listItemTitle}>{this.props.name}</Text>
+                <Text style={styles.listItemCareer}>{this.props.career}</Text>
+            </View>
+
         );
     }
 }
@@ -100,6 +119,21 @@ const styles = StyleSheet.create({
     },
     headerTitle: {
         marginLeft:50,
+    },
+    listItemBox:{
+        margin:7,
+        backgroundColor:'darkred',
+        color:'white',
+        padding:5,
+    },
+    listItemTitle:{
+        color:'white',
+        fontSize:20,
+        fontWeight:'bold',
+    },
+    listItemCareer:{
+        color:'white',
+        fontSize:17,
     }
 });
 
