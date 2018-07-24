@@ -1,54 +1,117 @@
 import React, {Component} from 'react';
-import {View, Text, Image, StyleSheet, Button, Alert} from 'react-native';
+import {View, Text, StyleSheet, Button, Alert} from 'react-native';
+import { createStackNavigator } from 'react-navigation';
+import {List, ListItem} from 'react-native-elements';
 
-export default class App extends Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            title: 'PROYECTAME',
-            subtitle: 'Proyecta tu índice académico.'
-        }
-    }
+class HomeScreen extends React.Component{
     render(){
-        let pic = {
-          uri: require('./images/logo-intec.svg'),
-        };
-
         return(
-            <View style={{flex:1, backgroundColor:'white'}}>
-                <View style={styles.container}>
-                    <Text style={styles.title}>
-                        {this.state.title}
-                    </Text>
-                    <Text style={styles.subtitle}>
-                        {this.state.subtitle}
-                    </Text>
-                    <View style={{marginTop:7, padding:3}}>
-                        <Button onPress={() => {Alert.alert("PROYECTAME", "Let's begin our journey..");}} title="Comenzar" color="darkred" accesibilityLabel="¡Empieza a proyectar tu índice ahora!"  />
-                    </View>
-                </View>
+            <View style={styles.container}>
+                <Text>Home Screen</Text>
+                <Button title="Go to Details"
+                    onPress={() => this.props.navigation.navigate('Details',
+                        {
+                            itemId: 86,
+                            otherParam: 'anything else...',
+                        }
+                    )} />
+                <Button title="Options"
+                    onPress={() => this.props.navigation.navigate('')}/>
             </View>
-
         );
     }
 }
+class OptionsScreen extends React.Component{
+    render(){
+        return(
+            <View>
+                {
+                    list.map((l,i) => (
+                        <ListItem
+                            Key={i}
+                            leftAvatar={{source:{uri:l.avatar_url}}}
+                            title={l.name}
+                            subtitle={l.subtitle}
+                        />
+                    ))
+                }
+            </View>
+        );
+    }
+}
+class DetailsScreen extends React.Component{
+    render(){
+        const {navigation} = this.props;
+        const itemId = navigation.getParam('itemId', 'NO-ID');
+        const otherParam = navigation.getParam('otherParam', 'Default text');
+
+        return(
+            <View style={styles.container}>
+                <Text>Details Screen</Text>
+                <Text>itemId: {JSON.stringify(itemId)}</Text>
+                <Text>otherParam: {JSON.stringify(otherParam)}</Text>
+                <Button title="Go to Home"
+                    onPress={() => this.props.navigation.navigate('Home')} />
+            </View>
+        );
+    }
+}
+
+const RootStack = createStackNavigator(
+    {
+        Home: {
+            screen: HomeScreen,
+            navigationOptions: () => ({
+                title: "Home",
+                headerBackTitle: null,
+            }),
+        },
+        Details: {
+            screen: DetailsScreen,
+            navigationOptions: () => ({
+                title: "Details",
+                headerTitleStyle: styles.headerTitle,
+            }),
+        },
+        Options:{
+            screen: OptionsScreen,
+            navigationOptions: () => ({
+                title: "Options",
+                headerTitleStyle: styles.headerTitle,
+            }),
+        }
+    },
+    {
+        initialRouteName: 'Home',
+    }
+);
+
+export default class App extends React.Component{
+    render(){
+        return <RootStack />;
+    }
+}
+
 const styles = StyleSheet.create({
-    container:{
-      marginTop:20,
-      flex:1,
-        justifyContent: 'center',
-        alignItems: 'center'
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
-    title: {
-        marginTop:10,
-        fontSize:32,
-        fontWeight: 'bold',
-        color:'darkred'
-    },
-    subtitle:{
-        marginTop:5,
-        fontSize:18,
-        fontStyle:'italic',
-        color:'#A9A3C2'
+    headerTitle: {
+        marginLeft:50,
     }
 });
+
+const list = [
+    {
+        name: 'Amy Farha',
+        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+        subtitle: 'Vice President'
+    },
+    {
+        name: 'Chris Jackson',
+        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+        subtitle: 'Vice Chairman'
+    },
+];
